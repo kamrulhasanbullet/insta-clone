@@ -1,4 +1,4 @@
-import Feed from "../components/feed/Feed";
+import Feed from "../../components/feed/Feed";
 
 export default function HomePage() {
   return (
