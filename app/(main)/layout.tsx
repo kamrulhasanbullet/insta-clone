@@ -1,5 +1,5 @@
 import { Sidebar } from "@/components/layout/Sidebar";
-import { MobileNav } from "@/components/layout/MobileNav";
+
 
 export default function MainLayout({
   children,
@@ -14,7 +14,7 @@ export default function MainLayout({
           {children}
         </div>
       </main>
-      <MobileNav />
+      {/* <MobileNav /> */}
     </div>
   );
 }

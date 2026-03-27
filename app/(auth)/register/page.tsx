@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
-import { Instagram } from "lucide-react";
+import { FaInstagram } from "react-icons/fa";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -55,7 +55,7 @@ export default function RegisterPage() {
       <div className="w-full max-w-sm">
         <div className="bg-white border border-gray-300 rounded-lg p-10 mb-4">
           <div className="flex justify-center mb-4">
-            <Instagram size={48} className="text-gray-800" />
+            <FaInstagram size={48} className="text-gray-800" />
           </div>
           <p className="text-center text-gray-500 font-semibold mb-6">
             Sign up to see photos and videos from your friends.

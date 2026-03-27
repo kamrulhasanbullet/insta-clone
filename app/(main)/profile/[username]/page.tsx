@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { ProfileHeader } from "@/components/profile/ProfileHeader";
-import { ProfileGrid } from "@/components/profile/ProfileGrid";
+// import { ProfileGrid } from "@/components/profile/ProfileGrid";
 import { UserService } from "@/services/user.service";
 import { PostService } from "@/services/post.service";
 
@@ -28,7 +28,7 @@ export default async function ProfilePage({ params }: Props) {
     <>
       <ProfileHeader user={user as any} />
       <hr className="border-gray-300" />
-      <ProfileGrid posts={posts as any} />
+      {/* <ProfileGrid posts={posts as any} /> */}
     </>
   );
 }

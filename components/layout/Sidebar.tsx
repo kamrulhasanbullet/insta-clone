@@ -8,12 +8,11 @@ import {
   Search,
   PlusSquare,
   Heart,
-  User,
   LogOut,
-  Instagram,
 } from "lucide-react";
 import { Avatar } from "@/components/shared/Avatar";
 import { cn } from "@/utils/cn";
+import { FaInstagram } from "react-icons/fa";
 
 const navItems = [
   { href: "/", label: "Home", icon: Home },
@@ -29,7 +28,7 @@ export function Sidebar() {
   return (
     <aside className="hidden md:flex flex-col fixed left-0 top-0 h-full w-64 xl:w-72 border-r border-gray-200 bg-white px-4 py-6 z-40">
       <Link href="/" className="flex items-center gap-3 px-3 py-4 mb-4">
-        <Instagram size={28} className="text-pink-600" />
+        <FaInstagram size={28} className="text-pink-600" />
         <span className="text-xl font-bold tracking-tight hidden xl:block">
           Instagram
         </span>

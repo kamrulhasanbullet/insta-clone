@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { Instagram } from "lucide-react";
+import { FaInstagram } from "react-icons/fa";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -37,7 +37,7 @@ export default function LoginPage() {
       <div className="w-full max-w-sm">
         <div className="bg-white border border-gray-300 rounded-lg p-10 mb-4">
           <div className="flex justify-center mb-8">
-            <Instagram size={48} className="text-gray-800" />
+            <FaInstagram size={48} className="text-gray-800" />
           </div>
 
           {error && (
