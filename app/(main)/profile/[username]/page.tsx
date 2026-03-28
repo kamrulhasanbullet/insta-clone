@@ -1,14 +1,18 @@
-"use client";
-
-import { useParams } from "next/navigation";
 import { Suspense } from "react";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { ProfileHeader } from "@/components/profile/ProfileHeader";
 import { ProfileGrid } from "@/components/profile/ProfileGrid";
 import { ProfileSkeleton } from "@/components/profile/ProfileSkeleton";
+import { UserService } from "@/services/user.service";
+import { PostService } from "@/services/post.service";
 
-export default function ProfilePage() {
-  const params = useParams();
-  const username = params?.username as string;
+interface Props {
+  params: Promise<{ username: string }>;
+}
+
+export default async function ProfilePage({ params }: Props) {
+  const { username } = await params; 
 
   return (
     <div>
@@ -20,20 +24,14 @@ export default function ProfilePage() {
 }
 
 async function ProfileContent({ username }: { username: string }) {
-  let user: any = null;
-  let posts: any[] = [];
+  const session = await getServerSession(authOptions);
 
-  try {
-    const [userRes, postsRes] = await Promise.all([
-      fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/users/${username}`),
-      fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/users/${username}/posts`),
-    ]);
-
-    if (userRes.ok) user = await userRes.json();
-    if (postsRes.ok) ({ posts } = await postsRes.json());
-  } catch (error) {
-    console.error("Failed to load profile:", error);
-  }
+  const [user, posts] = await Promise.all([
+    UserService.getUserByUsername(username, session?.user?.id).catch(
+      () => null,
+    ),
+    PostService.getUserPosts(username, session?.user?.id).catch(() => []),
+  ]);
 
   if (!user) {
     return (
@@ -43,11 +41,14 @@ async function ProfileContent({ username }: { username: string }) {
     );
   }
 
+  const plainUser = JSON.parse(JSON.stringify(user));
+  const plainPosts = JSON.parse(JSON.stringify(posts));
+
   return (
     <>
-      <ProfileHeader user={user.user} />
+      <ProfileHeader user={plainUser} />
       <hr className="border-gray-300 mx-4" />
-      <ProfileGrid posts={posts} />
+      <ProfileGrid posts={plainPosts} />
     </>
   );
 }

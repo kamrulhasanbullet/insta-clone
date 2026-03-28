@@ -67,8 +67,6 @@ const UserSchema = new Schema<IUser>(
 );
 
 // Indexes
-UserSchema.index({ username: 1 });
-UserSchema.index({ email: 1 });
 UserSchema.index({ username: "text", fullName: "text" }); 
 
 const User: Model<IUser> =
