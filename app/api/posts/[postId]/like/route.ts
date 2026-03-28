@@ -6,12 +6,13 @@ import { handleApiError, AppError } from "@/utils/apiError";
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { postId: string } },
+  { params }: { params: Promise<{ postId: string }> },
 ) {
   try {
+    const { postId } = await params; // ← await
     const session = await getServerSession(authOptions);
     if (!session) throw new AppError("Unauthorized", 401);
-    const result = await PostService.likePost(params.postId, session.user.id);
+    const result = await PostService.likePost(postId, session.user.id);
     return NextResponse.json(result);
   } catch (error) {
     return handleApiError(error);
@@ -20,12 +21,13 @@ export async function POST(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { postId: string } },
+  { params }: { params: Promise<{ postId: string }> },
 ) {
   try {
+    const { postId } = await params; // ← await
     const session = await getServerSession(authOptions);
     if (!session) throw new AppError("Unauthorized", 401);
-    const result = await PostService.unlikePost(params.postId, session.user.id);
+    const result = await PostService.unlikePost(postId, session.user.id);
     return NextResponse.json(result);
   } catch (error) {
     return handleApiError(error);
