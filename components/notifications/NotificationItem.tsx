@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { Avatar } from "@/components/shared/Avatar";
 import { Heart, MessageCircle, UserPlus } from "lucide-react";
 import { NotificationType } from "@/types/notification.types";
@@ -19,6 +19,8 @@ const iconMap: Record<string, React.ReactNode> = {
 };
 
 export function NotificationItem({ notification }: NotificationItemProps) {
+  const router = useRouter();
+
   const getNotificationText = () => {
     const action =
       notification.type === "like"
@@ -32,12 +34,15 @@ export function NotificationItem({ notification }: NotificationItemProps) {
         <span className="font-semibold">{notification.sender.username}</span>{" "}
         {action}{" "}
         {notification.post && (
-          <Link
-            href={`/post/${notification.post._id}`}
-            className="text-blue-500 hover:underline"
+          <span
+            onClick={(e) => {
+              e.stopPropagation();
+              router.push(`/post/${notification.post!._id}`);
+            }}
+            className="text-blue-500 hover:underline cursor-pointer"
           >
             your post
-          </Link>
+          </span>
         )}
         {notification.type === "follow" && "you"}.
       </>
@@ -45,10 +50,10 @@ export function NotificationItem({ notification }: NotificationItemProps) {
   };
 
   return (
-    <Link
-      href={`/profile/${notification.sender.username}`}
+    <div
+      onClick={() => router.push(`/profile/${notification.sender.username}`)}
       className={cn(
-        "flex items-start gap-4 p-4 hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0",
+        "flex items-start gap-4 p-4 hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0 cursor-pointer",
         !notification.isRead && "bg-blue-50 border-blue-100",
       )}
     >
@@ -61,7 +66,7 @@ export function NotificationItem({ notification }: NotificationItemProps) {
       <div className="flex-1 min-w-0">
         <div className="flex items-start gap-2 mb-1">
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-900 truncate">
+            <p className="text-sm font-medium text-gray-900">
               {getNotificationText()}
             </p>
             <p className="text-xs text-gray-500">
@@ -72,7 +77,13 @@ export function NotificationItem({ notification }: NotificationItemProps) {
         </div>
 
         {notification.post && (
-          <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 ml-12">
+          <div
+            onClick={(e) => {
+              e.stopPropagation();
+              router.push(`/post/${notification.post!._id}`);
+            }}
+            className="w-12 h-12 rounded-lg overflow-hidden shrink-0 ml-12 cursor-pointer"
+          >
             <Image
               src={notification.post.imageUrl}
               alt="Post preview"
@@ -83,6 +94,6 @@ export function NotificationItem({ notification }: NotificationItemProps) {
           </div>
         )}
       </div>
-    </Link>
+    </div>
   );
 }
