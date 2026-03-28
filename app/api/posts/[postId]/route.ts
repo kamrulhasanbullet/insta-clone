@@ -6,14 +6,12 @@ import { handleApiError, AppError } from "@/utils/apiError";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { postId: string } },
+  { params }: { params: Promise<{ postId: string }> },
 ) {
   try {
+    const { postId } = await params;
     const session = await getServerSession(authOptions);
-    const post = await PostService.getPostById(
-      params.postId,
-      session?.user?.id,
-    );
+    const post = await PostService.getPostById(postId, session?.user?.id);
     return NextResponse.json({ post });
   } catch (error) {
     return handleApiError(error);
@@ -22,13 +20,13 @@ export async function GET(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { postId: string } },
+  { params }: { params: Promise<{ postId: string }> },
 ) {
   try {
+    const { postId } = await params;
     const session = await getServerSession(authOptions);
     if (!session) throw new AppError("Unauthorized", 401);
-
-    const result = await PostService.deletePost(params.postId, session.user.id);
+    const result = await PostService.deletePost(postId, session.user.id);
     return NextResponse.json(result);
   } catch (error) {
     return handleApiError(error);

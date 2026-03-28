@@ -7,7 +7,7 @@ import { handleApiError, AppError } from "@/utils/apiError";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: Promise<{ postId: string }> }, // ← Promise
+  { params }: { params: Promise<{ postId: string }> }, 
 ) {
   try {
     const { postId } = await params; // ← await
@@ -21,7 +21,7 @@ export async function GET(
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: Promise<{ postId: string }> }, // ← Promise
+  { params }: { params: Promise<{ postId: string }> }, 
 ) {
   try {
     const { postId } = await params; // ← await
