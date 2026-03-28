@@ -1,40 +1,54 @@
-"use client";
-
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
-import Image from "next/image";
-import { useState } from "react";
-import { PostModal } from "@/components/post/PostModal";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { PostService } from "@/services/post.service";
-import { PostType } from "@/types/post.types";
+import { CommentService } from "@/services/comment.service";
+import { PostCard } from "@/components/post/PostCard";
+import { CommentSection } from "@/components/post/CommentSection";
+import { Skeleton } from "@/components/shared/Skeleton";
 
 interface Props {
-  params: { postId: string };
+  params: Promise<{ postId: string }>; // ← Promise
 }
 
 export default async function PostPage({ params }: Props) {
-  let post: PostType | null = null;
+  const { postId } = await params; // ← await
 
-  try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_APP_URL}/api/posts/${params.postId}`,
-      {
-        cache: "no-store",
-      },
-    );
+  return (
+    <div className="max-w-2xl mx-auto py-6">
+      <Suspense fallback={<Skeleton className="w-full h-96 rounded-lg" />}>
+        <PostContent postId={postId} />
+      </Suspense>
+    </div>
+  );
+}
 
-    if (!res.ok) {
-      notFound();
-    }
+async function PostContent({ postId }: { postId: string }) {
+  const session = await getServerSession(authOptions);
 
-    const data = await res.json();
-    post = data.post;
-  } catch (error) {
-    notFound();
-  }
+  const [post, commentsData] = await Promise.all([
+    PostService.getPostById(postId, session?.user?.id).catch(() => null),
+    CommentService.getComments(postId).catch(() => ({
+      comments: [],
+      total: 0,
+      hasMore: false,
+    })),
+  ]);
 
-  if (!post) {
-    notFound();
-  }
+  if (!post) return notFound();
 
-  return <PostModal post={post} />;
+  const plainPost = JSON.parse(JSON.stringify(post));
+  const plainComments = JSON.parse(JSON.stringify(commentsData));
+
+  return (
+    <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+      <PostCard post={plainPost} />
+      <CommentSection
+        postId={postId}
+        initialComments={plainComments.comments}
+        initialHasMore={plainComments.hasMore}
+      />
+    </div>
+  );
 }
