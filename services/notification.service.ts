@@ -1,6 +1,7 @@
 import { connectDB } from "@/lib/mongodb";
 import Notification from "@/models/Notification";
-import { NotificationType } from "@/types/notification.types";
+import "@/models/Post"; 
+import "@/models/User"; 
 
 interface CreateNotificationInput {
   recipient: string;
