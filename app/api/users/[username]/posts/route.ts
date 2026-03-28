@@ -6,14 +6,12 @@ import { handleApiError } from "@/utils/apiError";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { username: string } },
+  { params }: { params: Promise<{ username: string }> }, 
 ) {
   try {
+    const { username } = await params; 
     const session = await getServerSession(authOptions);
-    const posts = await PostService.getUserPosts(
-      params.username,
-      session?.user?.id,
-    );
+    const posts = await PostService.getUserPosts(username, session?.user?.id);
     return NextResponse.json({ posts });
   } catch (error) {
     return handleApiError(error);
