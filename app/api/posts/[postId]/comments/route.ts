@@ -7,11 +7,12 @@ import { handleApiError, AppError } from "@/utils/apiError";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { postId: string } },
+  { params }: { params: Promise<{ postId: string }> }, // ← Promise
 ) {
   try {
+    const { postId } = await params; // ← await
     const page = Number(req.nextUrl.searchParams.get("page") ?? "1");
-    const result = await CommentService.getComments(params.postId, page);
+    const result = await CommentService.getComments(postId, page);
     return NextResponse.json(result);
   } catch (error) {
     return handleApiError(error);
@@ -20,12 +21,12 @@ export async function GET(
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { postId: string } },
+  { params }: { params: Promise<{ postId: string }> }, // ← Promise
 ) {
   try {
+    const { postId } = await params; // ← await
     const session = await getServerSession(authOptions);
     if (!session) throw new AppError("Unauthorized", 401);
-
     const body = await req.json();
     const parsed = createCommentSchema.safeParse(body);
     if (!parsed.success) {
@@ -34,9 +35,8 @@ export async function POST(
         { status: 400 },
       );
     }
-
     const comment = await CommentService.addComment(
-      params.postId,
+      postId,
       session.user.id,
       parsed.data.text,
     );
