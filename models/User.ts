@@ -53,7 +53,7 @@ const UserSchema = new Schema<IUser>(
     bio: { type: String, default: "", maxlength: 150 },
     avatarUrl: {
       type: String,
-      default: "https://res.cloudinary.com/demo/image/upload/v1/default_avatar",
+      default: "",
     },
     avatarPublicId: { type: String, default: "" },
     website: { type: String, default: "" },

@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Link as LinkIcon, CheckCircle, Loader2 } from "lucide-react";
+import { Link as LinkIcon, CheckCircle, Loader2, User } from "lucide-react";
 import { Spinner } from "@/components/shared/Spinner";
 
 export function EditProfileForm() {
@@ -19,7 +19,7 @@ export function EditProfileForm() {
     isPrivate: false,
   });
   const [preview, setPreview] = useState<string | null>(null);
-  const [currentAvatar, setCurrentAvatar] = useState("/default-avatar.png");
+  const [currentAvatar, setCurrentAvatar] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -129,7 +129,7 @@ export function EditProfileForm() {
       className="space-y-6 bg-white rounded-2xl shadow-sm border border-gray-200 p-8"
     >
       {/* Avatar */}
-      <div className="flex items-center gap-6">
+      {/* <div className="flex items-center gap-6">
         <div
           onClick={() => fileRef.current?.click()}
           className="cursor-pointer relative w-20 h-20 rounded-full overflow-hidden bg-gray-200 shrink-0"
@@ -154,6 +154,46 @@ export function EditProfileForm() {
             Change profile photo
           </button>
         </div>
+        <input
+          ref={fileRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={handleAvatarChange}
+        />
+      </div> */}
+      {/* Avatar */}
+      <div className="flex items-center gap-6">
+        <div
+          onClick={() => fileRef.current?.click()}
+          className="cursor-pointer relative w-20 h-20 rounded-full overflow-hidden bg-gray-200 shrink-0 flex items-center justify-center"
+        >
+          {preview || currentAvatar ? (
+            <Image
+              src={preview || currentAvatar}
+              alt="Profile"
+              fill
+              className="object-cover"
+            />
+          ) : (
+            <User size={32} className="text-gray-400" />
+          )}
+          <div className="absolute inset-0 bg-black/20 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
+            <span className="text-white text-xs font-semibold">Change</span>
+          </div>
+        </div>
+
+        <div>
+          <p className="font-semibold text-sm">{session?.user?.username}</p>
+          <button
+            type="button"
+            onClick={() => fileRef.current?.click()}
+            className="text-sm text-blue-500 font-semibold hover:text-blue-600 mt-1"
+          >
+            Change profile photo
+          </button>
+        </div>
+
         <input
           ref={fileRef}
           type="file"

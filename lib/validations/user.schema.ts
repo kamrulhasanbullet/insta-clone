@@ -19,6 +19,8 @@ export const updateProfileSchema = z.object({
   bio: z.string().max(150).optional(),
   website: z.string().url().optional().or(z.literal("")),
   isPrivate: z.boolean().optional(),
+  avatarUrl: z.string().optional(), 
+  avatarPublicId: z.string().optional(), 
 });
 
 export type RegisterInput = z.infer<typeof registerSchema>;
