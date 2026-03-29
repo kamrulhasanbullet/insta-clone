@@ -1,10 +1,11 @@
 "use client";
 
+import { Heart, Home, PlusSquare, Search } from "lucide-react";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useSession } from "next-auth/react";
-import { Home, Search, PlusSquare, Heart, User, Instagram } from "lucide-react";
-import { Avatar } from "@/components/shared/Avatar";
+import { Avatar } from "../shared/Avatar";
+import { BsInstagram } from "react-icons/bs";
 import { cn } from "@/utils/cn";
 
 const navItems = [
@@ -32,12 +33,6 @@ const navItems = [
     label: "Activity",
     match: (path: string) => path === "/notifications",
   },
-  {
-    href: "/profile",
-    icon: User,
-    label: "Profile",
-    match: (path: string) => path.startsWith("/profile"),
-  },
 ];
 
 export function MobileNav() {
@@ -46,56 +41,59 @@ export function MobileNav() {
 
   return (
     <>
-      {/* Mobile bottom nav */}
       <nav className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-200 md:hidden z-50 shadow-lg">
         <div className="flex items-center justify-around h-16 px-2">
           {navItems.map(({ href, icon: Icon, label, match }) => {
             const isActive = match(pathname);
-
             return (
               <Link
                 key={href}
                 href={href}
                 className={cn(
-                  "flex flex-col items-center gap-0.5 p-1 rounded-xl transition-all group",
-                  isActive
-                    ? "text-gradient-pink-purple scale-105"
-                    : "text-gray-600 hover:text-gray-900 hover:scale-105",
+                  "flex flex-col items-center gap-0.5 p-1 rounded-xl transition-all",
+                  isActive ? "text-black" : "text-gray-500 hover:text-gray-900",
                 )}
               >
-                <Icon
-                  size={24}
-                  strokeWidth={isActive ? 3 : 2}
-                  className={cn(
-                    "transition-all group-hover:scale-110",
-                    isActive && "drop-shadow-sm",
-                  )}
-                />
-                <span className="text-xs font-medium leading-tight">
-                  {label}
-                </span>
+                <Icon size={24} strokeWidth={isActive ? 2.5 : 1.5} />
+                <span className="text-xs font-medium">{label}</span>
               </Link>
             );
           })}
+
+          {session && (
+            <Link
+              href={`/profile/${session.user.username}`}
+              className={cn(
+                "flex flex-col items-center gap-0.5 p-1 rounded-xl transition-all",
+                pathname.startsWith("/profile")
+                  ? "text-black"
+                  : "text-gray-500 hover:text-gray-900",
+              )}
+            >
+              <Avatar
+                src={session.user.image}
+                alt={session.user.username || ""}
+                size="xs"
+                className={
+                  pathname.startsWith("/profile") ? "ring-2 ring-black" : ""
+                }
+              />
+              <span className="text-xs font-medium">Profile</span>
+            </Link>
+          )}
         </div>
       </nav>
 
-      {/* Mobile top bar for profile/username */}
+      {/* Mobile top bar */}
       {pathname.startsWith("/profile") && (
         <div className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-md border-b border-gray-200 md:hidden z-40 px-4 py-3">
           <div className="flex items-center justify-between">
-            <Link
-              href="/"
-              className="p-2 rounded-full hover:bg-gray-100 transition-colors"
-            >
-              <Instagram size={24} className="text-pink-600" />
+            <Link href="/" className="p-2 rounded-full hover:bg-gray-100">
+              <BsInstagram size={24} className="text-pink-600" />
             </Link>
-            <Link
-              href={`/profile/${session?.user?.username}`}
-              className="text-lg font-bold text-center flex-1 truncate px-4"
-            >
+            <span className="text-lg font-bold">
               {pathname.split("/").pop()}
-            </Link>
+            </span>
             <div className="w-10" />
           </div>
         </div>
