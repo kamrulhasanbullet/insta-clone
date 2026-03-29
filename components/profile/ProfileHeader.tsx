@@ -1,12 +1,10 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useFollow } from "@/hooks/useFollow";
 import { Avatar } from "@/components/shared/Avatar";
 import { UserWithFollow } from "@/types/user.types";
-import { Settings } from "lucide-react";
 
 interface ProfileHeaderProps {
   user: UserWithFollow;
@@ -24,7 +22,7 @@ export function ProfileHeader({ user }: ProfileHeaderProps) {
     <div className="py-8 px-4 max-w-3xl mx-auto">
       <div className="flex items-start gap-10 mb-8">
         {/* Avatar */}
-        <div className="relative w-20 h-20 md:w-36 md:h-36 rounded-full overflow-hidden bg-gradient-to-br from-pink-400 to-orange-400 p-0.5 flex-shrink-0">
+        <div className="relative w-20 h-20 md:w-36 md:h-36 rounded-full overflow-hidden bg-linear-to-br from-pink-400 to-orange-400 p-0.5 shrink-0">
           <div className="w-full h-full rounded-full overflow-hidden bg-white">
             <Avatar src={user.avatarUrl} alt={user.username} size="xl" />
           </div>

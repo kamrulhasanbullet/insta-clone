@@ -14,7 +14,7 @@ const sizeMap = {
   sm: 32,
   md: 40,
   lg: 56,
-  xl: 80,
+  xl: 140,
 };
 
 export function Avatar({ src, alt, size = "md", className }: AvatarProps) {

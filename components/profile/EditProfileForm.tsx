@@ -37,7 +37,7 @@ export function EditProfileForm() {
           website: user.website || "",
           isPrivate: user.isPrivate || false,
         });
-        setCurrentAvatar(user.avatarUrl || "/default-avatar.png");
+        setCurrentAvatar(user.avatarUrl || "");
       })
       .catch(console.error)
       .finally(() => setLoading(false));
@@ -128,40 +128,6 @@ export function EditProfileForm() {
       onSubmit={handleSubmit}
       className="space-y-6 bg-white rounded-2xl shadow-sm border border-gray-200 p-8"
     >
-      {/* Avatar */}
-      {/* <div className="flex items-center gap-6">
-        <div
-          onClick={() => fileRef.current?.click()}
-          className="cursor-pointer relative w-20 h-20 rounded-full overflow-hidden bg-gray-200 shrink-0"
-        >
-          <Image
-            src={preview || currentAvatar}
-            alt="Profile"
-            fill
-            className="object-cover"
-          />
-          <div className="absolute inset-0 bg-black/20 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
-            <span className="text-white text-xs font-semibold">Change</span>
-          </div>
-        </div>
-        <div>
-          <p className="font-semibold text-sm">{session?.user?.username}</p>
-          <button
-            type="button"
-            onClick={() => fileRef.current?.click()}
-            className="text-sm text-blue-500 font-semibold hover:text-blue-600 mt-1"
-          >
-            Change profile photo
-          </button>
-        </div>
-        <input
-          ref={fileRef}
-          type="file"
-          accept="image/*"
-          className="hidden"
-          onChange={handleAvatarChange}
-        />
-      </div> */}
       {/* Avatar */}
       <div className="flex items-center gap-6">
         <div
