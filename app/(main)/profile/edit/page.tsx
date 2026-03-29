@@ -28,7 +28,7 @@ export default function EditProfilePage() {
   if (!session?.user) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-gray-50 pt-24 pb-8 md:py-8">
       <div className="max-w-2xl mx-auto px-4">
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 mb-8">
           <h1 className="text-2xl font-bold mb-2 flex items-center gap-2">

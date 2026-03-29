@@ -19,73 +19,86 @@ export function ProfileHeader({ user }: ProfileHeaderProps) {
   );
 
   return (
-    <div className="py-8 px-4 max-w-3xl mx-auto">
-      <div className="flex items-start gap-10 mb-8">
-        {/* Avatar */}
-        <div className="relative w-20 h-20 md:w-36 md:h-36 rounded-full overflow-hidden bg-linear-to-br from-pink-400 to-orange-400 p-0.5 shrink-0">
-          <div className="w-full h-full rounded-full overflow-hidden bg-white">
-            <Avatar src={user.avatarUrl} alt={user.username} size="xl" />
-          </div>
-        </div>
-
-        {/* Info */}
-        <div className="flex-1">
-          <div className="flex items-center gap-4 mb-4 flex-wrap">
-            <h1 className="text-xl font-light">{user.username}</h1>
-            {isOwnProfile ? (
-              <Link
-                href="/profile/edit"
-                className="px-4 py-1.5 border border-gray-300 rounded-lg text-sm font-semibold hover:bg-gray-50 flex items-center gap-2"
-              >
-                Edit profile
-              </Link>
-            ) : (
-              <button
-                onClick={toggle}
-                disabled={loading}
-                className={`px-6 py-1.5 rounded-lg text-sm font-semibold transition-colors ${
-                  following
-                    ? "border border-gray-300 hover:bg-gray-50"
-                    : "bg-blue-500 text-white hover:bg-blue-600"
-                }`}
-              >
-                {loading ? "..." : following ? "Following" : "Follow"}
-              </button>
-            )}
-          </div>
-
-          {/* Stats */}
-          <div className="flex gap-8 mb-4">
-            {[
-              { label: "posts", value: user.postsCount },
-              { label: "followers", value: user.followersCount },
-              { label: "following", value: user.followingCount },
-            ].map(({ label, value }) => (
-              <div key={label} className="text-center">
-                <span className="font-semibold text-sm">
-                  {value.toLocaleString()}
-                </span>
-                <span className="text-sm text-gray-600 ml-1">{label}</span>
+    <div className="px-4 pt-20 pb-6 md:py-8">
+      <div className="mx-auto max-w-3xl">
+        <div className="flex flex-col gap-6 md:flex-row md:items-start md:gap-10">
+          {/* Avatar */}
+          <div className="mx-auto shrink-0 md:mx-0">
+            <div className="relative h-36 w-36 overflow-hidden rounded-full bg-linear-to-br from-pink-400 to-orange-400 p-0.5">
+              <div className="h-full w-full overflow-hidden rounded-full bg-white">
+                <Avatar src={user.avatarUrl} alt={user.username} size="xl" />
               </div>
-            ))}
+            </div>
           </div>
 
-          {/* Bio */}
-          <div>
-            <p className="font-semibold text-sm">{user.fullName}</p>
-            {user.bio && (
-              <p className="text-sm whitespace-pre-wrap">{user.bio}</p>
-            )}
-            {user.website && (
-              <a
-                href={user.website}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm text-blue-900 font-semibold"
-              >
-                {user.website}
-              </a>
-            )}
+          {/* Info */}
+          <div className="flex-1 text-center md:text-left">
+            <div className="mb-4 flex flex-col items-center gap-3 md:flex-row md:items-center md:gap-4 md:flex-wrap md:justify-start">
+              <h1 className="hidden md:block font-light md:text-2xl">
+                {user.username}
+              </h1>
+
+              {!isOwnProfile && (
+                <button
+                  onClick={toggle}
+                  disabled={loading}
+                  className={`w-full rounded-lg px-6 py-2 text-sm font-semibold transition-colors md:w-auto ${
+                    following
+                      ? "border border-gray-300 hover:bg-gray-50"
+                      : "bg-blue-500 text-white hover:bg-blue-600"
+                  }`}
+                >
+                  {loading ? "..." : following ? "Following" : "Follow"}
+                </button>
+              )}
+            </div>
+
+            {/* Stats */}
+            <div className="mb-4 flex justify-center gap-6 md:justify-start md:gap-8">
+              {[
+                { label: "posts", value: user.postsCount },
+                { label: "followers", value: user.followersCount },
+                { label: "following", value: user.followingCount },
+              ].map(({ label, value }) => (
+                <div key={label} className="text-center">
+                  <span className="font-semibold text-sm md:text-base">
+                    {value.toLocaleString()}
+                  </span>
+                  <span className="ml-1 text-sm text-gray-600">{label}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Bio */}
+            <div className="space-y-2">
+              <p className="font-semibold text-sm">{user.fullName}</p>
+
+              {user.bio && (
+                <p className="whitespace-pre-wrap text-sm">{user.bio}</p>
+              )}
+
+              {user.website && (
+                <a
+                  href={user.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block text-sm font-semibold text-blue-900 wrap-break-words"
+                >
+                  {user.website}
+                </a>
+              )}
+
+              {isOwnProfile && (
+                <div className="pt-2">
+                  <Link
+                    href="/profile/edit"
+                    className="inline-flex w-full items-center justify-center rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold hover:bg-gray-50 md:w-auto"
+                  >
+                    Edit profile
+                  </Link>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
