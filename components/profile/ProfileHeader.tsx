@@ -45,10 +45,18 @@ export function ProfileHeader({ user }: ProfileHeaderProps) {
                   className={`w-full rounded-lg px-6 py-2 text-sm font-semibold transition-colors md:w-auto ${
                     following
                       ? "border border-gray-300 hover:bg-gray-50"
-                      : "bg-blue-500 text-white hover:bg-blue-600"
+                      : user.isFollowedBy
+                        ? "border border-blue-500 text-blue-500 hover:bg-blue-50" // ← Follow Back
+                        : "bg-blue-500 text-white hover:bg-blue-600"
                   }`}
                 >
-                  {loading ? "..." : following ? "Following" : "Follow"}
+                  {loading
+                    ? "..."
+                    : following
+                      ? "Following"
+                      : user.isFollowedBy
+                        ? "Follow Back"
+                        : "Follow"}
                 </button>
               )}
             </div>
