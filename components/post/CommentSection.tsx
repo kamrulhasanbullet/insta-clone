@@ -15,7 +15,6 @@ interface Props {
 export function CommentSection({
   postId,
   initialComments,
-  initialHasMore,
 }: Props) {
   const { data: session } = useSession();
   const [comments, setComments] = useState<CommentType[]>(initialComments);

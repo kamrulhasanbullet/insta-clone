@@ -13,10 +13,10 @@ interface Props {
 }
 
 export default async function PostPage({ params }: Props) {
-  const { postId } = await params; // ← await
+  const { postId } = await params; 
 
   return (
-    <div className="max-w-2xl mx-auto py-6">
+    <div className="max-w-lg mx-auto py-6">
       <Suspense fallback={<Skeleton className="w-full h-96 rounded-lg" />}>
         <PostContent postId={postId} />
       </Suspense>
