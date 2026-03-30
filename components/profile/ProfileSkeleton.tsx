@@ -3,48 +3,59 @@ import { Skeleton } from "@/components/shared/Skeleton";
 export function ProfileSkeleton() {
   return (
     <>
-      {/* === ProfileHeader Skeleton === */}
-      <div className="py-8 px-4 max-w-3xl mx-auto">
-        <div className="flex items-start gap-10 mb-8">
-          {/* Avatar - matches ProfileHeader exact size */}
-          <Skeleton className="w-20 h-20 md:w-36 md:h-36 rounded-full" />
-
-          {/* Profile info section */}
-          <div className="flex-1 space-y-6">
-            {/* Username + Edit button row */}
-            <div className="flex items-center gap-4 mb-4">
-              <Skeleton className="h-7 w-32 rounded-full" />
-              <Skeleton className="h-10 w-28 rounded-lg" />
+      {/* Header Skeleton */}
+      <div className="px-4 pt-20 pb-6 md:py-8">
+        <div className="mx-auto max-w-3xl">
+          <div className="flex flex-col gap-6 md:flex-row md:items-start md:gap-10">
+            {/* Avatar */}
+            <div className="mx-auto shrink-0 md:mx-0">
+              <Skeleton className="w-36 h-36 rounded-full" />
             </div>
 
-            {/* Stats row - EXACTLY 3 items */}
-            <div className="flex gap-8">
-              {Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="text-center space-y-1">
-                  <Skeleton className="h-8 w-16 mx-auto rounded-full" />
-                  <Skeleton className="h-4 w-20 mx-auto rounded" />
+            {/* Info */}
+            <div className="flex-1">
+              {/* Username */}
+              <div className="flex justify-center md:justify-start mb-4">
+                <Skeleton className="h-6 w-40 rounded" />
+              </div>
+
+              {/* Stats */}
+              <div className="flex justify-center md:justify-start gap-6 md:gap-8 mb-4">
+                {[60, 72, 68].map((w, i) => (
+                  <div
+                    key={i}
+                    className="flex flex-col items-center md:items-start gap-1"
+                  >
+                    <Skeleton className="h-5 w-20 rounded" />
+                    <Skeleton style={{ width: w }} className="h-3 rounded" />
+                  </div>
+                ))}
+              </div>
+
+              {/* Bio lines */}
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-28 mx-auto md:mx-0 rounded" />
+                <Skeleton className="h-4 w-56 mx-auto md:mx-0 rounded" />
+                <Skeleton className="h-4 w-44 mx-auto md:mx-0 rounded" />
+
+                {/* Edit button */}
+                <div className="pt-3">
+                  <Skeleton className="h-8 w-full md:w-28 rounded-lg" />
                 </div>
-              ))}
-            </div>
-
-            {/* Bio + website */}
-            <div className="space-y-2">
-              <Skeleton className="h-5 w-48 rounded" />
-              <Skeleton className="h-4 w-72 rounded" />
-              <Skeleton className="h-4 w-40 rounded" />
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* === EXACT SAME HR === */}
-      <hr className="border-gray-300 mx-4 bg-gray-200 h-px" />
+      {/* Divider */}
+      <hr className="border-gray-300 mx-4" />
 
-      {/* === ProfileGrid Skeleton === */}
-      <div className="pt-8 px-4">
-        <div className="grid grid-cols-3 gap-2">
+      {/* Grid Skeleton */}
+      <div className="pt-4 px-4 pb-20 md:pb-4">
+        <div className="grid grid-cols-3 gap-1">
           {Array.from({ length: 12 }).map((_, i) => (
-            <Skeleton key={i} className="aspect-square rounded-sm" />
+            <Skeleton key={i} className="aspect-square w-full rounded-sm" />
           ))}
         </div>
       </div>

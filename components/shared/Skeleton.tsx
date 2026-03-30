@@ -2,6 +2,7 @@ import { cn } from "@/utils/cn";
 
 interface SkeletonProps {
   className?: string;
+  style?: React.CSSProperties;
 }
 
 export function Skeleton({ className }: SkeletonProps) {
