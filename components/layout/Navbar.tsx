@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Search, Heart, Plus, Instagram } from "lucide-react";
+import { Search, Heart, Plus,  } from "lucide-react";
 import { Avatar } from "@/components/shared/Avatar";
 import { useSession } from "next-auth/react";
 import { cn } from "@/utils/cn";
+import { BsInstagram } from "react-icons/bs";
 
 export function Navbar() {
   const pathname = usePathname();
@@ -19,8 +20,8 @@ export function Navbar() {
           href="/"
           className="flex items-center gap-2 p-2 -m-2 rounded-lg hover:bg-gray-100"
         >
-          <Instagram size={28} className="text-gradient-pink-purple" />
-          <span className="text-xl font-bold bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent">
+          <BsInstagram size={28} className="text-gradient-pink-purple" />
+          <span className="text-xl font-bold bg-linear-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent">
             Instagram
           </span>
         </Link>
@@ -39,7 +40,7 @@ export function Navbar() {
 
           <Link
             href="/post/create"
-            className="p-2 rounded-full bg-gradient-to-r from-pink-500 to-orange-500 hover:shadow-lg transition-all"
+            className="p-2 rounded-full bg-linear-to-r from-pink-500 to-orange-500 hover:shadow-lg transition-all"
           >
             <Plus size={24} className="text-white" />
           </Link>

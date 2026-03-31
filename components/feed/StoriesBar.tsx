@@ -23,9 +23,9 @@ export function StoriesBar() {
       {session && (
         <Link
           href="/post/create"
-          className="flex flex-col items-center gap-1 flex-shrink-0"
+          className="flex flex-col items-center gap-1 shrink-0"
         >
-          <div className="w-16 h-16 rounded-full bg-gradient-to-r from-pink-500 to-orange-500 p-0.5 flex-shrink-0">
+          <div className="w-16 h-16 rounded-full bg-linear-to-r from-pink-500 to-orange-500 p-0.5 shrink-0">
             <div className="w-full h-full bg-white rounded-full flex items-center justify-center">
               <Image
                 src={session.user.image || "/default-avatar.png"}
@@ -36,7 +36,7 @@ export function StoriesBar() {
               />
             </div>
           </div>
-          <span className="text-xs text-center leading-tight max-w-[64px] truncate">
+          <span className="text-xs text-center leading-tight max-w-16 truncate">
             Your Story
           </span>
         </Link>
@@ -46,19 +46,19 @@ export function StoriesBar() {
         <Link
           key={story.id}
           href={`/stories/${story.id}`}
-          className="flex flex-col items-center gap-1 flex-shrink-0"
+          className="flex flex-col items-center gap-1 shrink-0"
         >
-          <div className="relative w-16 h-16 flex-shrink-0">
-            <div className="w-16 h-16 bg-gradient-to-r from-pink-500 via-purple-500 to-orange-500 rounded-full p-0.5">
+          <div className="relative w-16 h-16 shrink-0">
+            <div className="w-16 h-16 bg-linear-to-r from-pink-500 via-purple-500 to-orange-500 rounded-full p-0.5">
               <Avatar src={story.avatarUrl} alt={story.username} size="lg" />
             </div>
             {story.isNew && (
               <div className="absolute -top-1 -right-1 w-5 h-5 bg-white rounded-full border-2 border-gray-50 flex items-center justify-center">
-                <div className="w-2 h-2 bg-gradient-to-r from-pink-500 to-orange-500 rounded-full" />
+                <div className="w-2 h-2 bg-linear-to-r from-pink-500 to-orange-500 rounded-full" />
               </div>
             )}
           </div>
-          <span className="text-xs text-center leading-tight max-w-[64px] truncate">
+          <span className="text-xs text-center leading-tight max-w-16 truncate">
             {story.username}
           </span>
         </Link>

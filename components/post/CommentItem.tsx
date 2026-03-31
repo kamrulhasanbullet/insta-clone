@@ -50,10 +50,10 @@ export function CommentItem({ comment, onDelete }: CommentItemProps) {
                 · {timeAgo(comment.createdAt)}
               </span>
             </div>
-            <p className="text-sm break-words">{comment.text}</p>
+            <p className="text-sm wrap-break-words">{comment.text}</p>
           </div>
 
-          <div className="flex items-center gap-2 flex-shrink-0 ml-2">
+          <div className="flex items-center gap-2 shrink-0 ml-2">
             <button className="p-1 text-gray-400 hover:text-gray-600 rounded-full">
               <Heart
                 size={16}
