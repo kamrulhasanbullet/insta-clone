@@ -1,9 +1,6 @@
 "use client";
 
-import Link from "next/link";
 import { User, Users, UserPlus } from "lucide-react";
-import { Button } from "@/components/shared/Button";
-import { cn } from "@/utils/cn";
 
 interface ProfileStatsProps {
   postsCount: number;
