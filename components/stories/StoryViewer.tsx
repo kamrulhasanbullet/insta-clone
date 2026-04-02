@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { X, ChevronLeft, ChevronRight, Trash2 } from "lucide-react";
+import { X, Trash2 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { Avatar } from "@/components/shared/Avatar";
 import { StoryType } from "@/types/story.types";
@@ -18,34 +18,45 @@ export function StoryViewer({ story, onClose }: StoryViewerProps) {
   const { data: session } = useSession();
   const [progress, setProgress] = useState(0);
   const isOwn = session?.user?.username === story.author.username;
+  const onCloseRef = useRef(onClose);
 
-  // Auto progress — 5 seconds per story
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
+
   useEffect(() => {
     setProgress(0);
+
     const interval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
           clearInterval(interval);
-          onClose();
           return 100;
         }
         return prev + 1;
       });
-    }, 50); // 5000ms / 100 = 50ms per tick
+    }, 50);
 
-    return () => clearInterval(interval);
-  }, [story._id, onClose]);
+    const closeTimeout = setTimeout(() => {
+      onCloseRef.current();
+    }, 5100);
+
+    return () => {
+      clearInterval(interval);
+      clearTimeout(closeTimeout);
+    };
+  }, [story._id]);
 
   const handleDelete = async () => {
     await fetch(`/api/stories/${story._id}`, { method: "DELETE" });
-    onClose();
+    onCloseRef.current();
   };
 
   return (
     <div className="fixed inset-0 z-50 bg-black flex items-center justify-center">
       {/* Close */}
       <button
-        onClick={onClose}
+        onClick={() => onCloseRef.current()}
         className="absolute top-4 right-4 z-10 text-white p-2 rounded-full hover:bg-white/10"
       >
         <X size={24} />
@@ -68,7 +79,7 @@ export function StoryViewer({ story, onClose }: StoryViewerProps) {
           <Link
             href={`/profile/${story.author.username}`}
             className="flex items-center gap-2"
-            onClick={onClose}
+            onClick={() => onCloseRef.current()}
           >
             <Avatar
               src={story.author.avatarUrl}

@@ -1,8 +1,13 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  startTransition,
+} from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { Plus } from "lucide-react";
 import { Avatar } from "@/components/shared/Avatar";
@@ -34,6 +39,12 @@ export function StoriesBar() {
   const myStory = stories.find(
     (s) => s.author.username === session?.user?.username,
   );
+
+  const handleClose = useCallback(() => {
+    startTransition(() => {
+      setSelectedStory(null);
+    });
+  }, []);
 
   return (
     <>
@@ -121,10 +132,7 @@ export function StoriesBar() {
 
       {/* Story Viewer Modal */}
       {selectedStory && (
-        <StoryViewer
-          story={selectedStory}
-          onClose={() => setSelectedStory(null)}
-        />
+        <StoryViewer story={selectedStory} onClose={handleClose} />
       )}
     </>
   );
