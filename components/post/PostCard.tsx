@@ -7,14 +7,16 @@ import { Avatar } from "@/components/shared/Avatar";
 import { useLike } from "@/hooks/useLike";
 import { timeAgo } from "@/utils/formatDate";
 import { PostType } from "@/types/post.types";
-import { useState } from "react";
+import { useCallback, useState } from "react";
+import { StoryType } from "@/types/story.types";
+import { StoryViewer } from "../stories/StoryViewer";
 
 interface PostCardProps {
   post: PostType;
   onDelete?: (id: string) => void;
 }
 
-export function PostCard({ post, onDelete }: PostCardProps) {
+export function PostCard({ post }: PostCardProps) {
   const { liked, count, toggle } = useLike(
     post._id,
     post.isLiked,
@@ -22,6 +24,7 @@ export function PostCard({ post, onDelete }: PostCardProps) {
   );
   const [showCommentInput, setShowCommentInput] = useState(false);
   const [commentText, setCommentText] = useState("");
+  const [story, setStory] = useState<StoryType | null>(null);
 
   const handleComment = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,27 +37,43 @@ export function PostCard({ post, onDelete }: PostCardProps) {
     setCommentText("");
   };
 
+  const handleAvatarClick = async () => {
+    const res = await fetch(`/api/users/${post.author.username}/stories`);
+    const data = await res.json();
+    if (data.stories?.length > 0) {
+      setStory(data.stories[0]);
+    }
+  };
+
+  const handleStoryClose = useCallback(() => {
+    setStory(null);
+  }, []);
+
   return (
     <article className="bg-white border border-gray-200 rounded-lg mb-6 max-w-lg w-full">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3">
-        <Link
-          href={`/profile/${post.author.username}`}
-          className="flex items-center gap-3 hover:opacity-80"
-        >
-          <Avatar
-            src={post.author.avatarUrl}
-            alt={post.author.username}
-            size="sm"
-            className="ring-2 ring-pink-500 ring-offset-1"
-          />
+        <div className="flex items-center gap-3 hover:opacity-80">
+          <button onClick={handleAvatarClick} className="cursor-pointer">
+            <Avatar
+              src={post.author.avatarUrl}
+              alt={post.author.username}
+              size="sm"
+              className="ring-2 ring-pink-500 ring-offset-1"
+            />
+          </button>
           <div>
-            <p className="text-sm font-semibold">{post.author.username}</p>
+            <Link
+              href={`/profile/${post.author.username}`}
+              className="text-sm font-semibold"
+            >
+              {post.author.username}
+            </Link>
             {post.location && (
               <p className="text-xs text-gray-500">{post.location}</p>
             )}
           </div>
-        </Link>
+        </div>
         <button className="text-gray-500 hover:text-gray-800">
           <MoreHorizontal size={20} />
         </button>
@@ -154,6 +173,9 @@ export function PostCard({ post, onDelete }: PostCardProps) {
           </button>
         </form>
       )}
+
+      {/* Story Viewer */}
+      {story && <StoryViewer story={story} onClose={handleStoryClose} />}
     </article>
   );
 }
