@@ -5,6 +5,9 @@ import { useSession } from "next-auth/react";
 import { useFollow } from "@/hooks/useFollow";
 import { Avatar } from "@/components/shared/Avatar";
 import { UserWithFollow } from "@/types/user.types";
+import { useCallback, useState } from "react";
+import { StoryType } from "@/types/story.types";
+import { StoryViewer } from "../stories/StoryViewer";
 
 interface ProfileHeaderProps {
   user: UserWithFollow;
@@ -17,6 +20,19 @@ export function ProfileHeader({ user }: ProfileHeaderProps) {
     user.username,
     user.isFollowing,
   );
+  const [story, setStory] = useState<StoryType | null>(null);
+
+  const handleAvatarClick = async () => {
+    const res = await fetch(`/api/users/${user.username}/stories`);
+    const data = await res.json();
+    if (data.stories?.length > 0) {
+      setStory(data.stories[0]);
+    }
+  };
+
+  const handleStoryClose = useCallback(() => {
+    setStory(null);
+  }, []);
 
   return (
     <div className="px-4 pt-20 pb-6 md:py-8">
@@ -25,7 +41,10 @@ export function ProfileHeader({ user }: ProfileHeaderProps) {
           {/* Avatar */}
           <div className="mx-auto shrink-0 md:mx-0">
             <div className="relative h-36 w-36 overflow-hidden rounded-full bg-linear-to-br from-pink-400 to-orange-400 p-0.5">
-              <div className="h-full w-full overflow-hidden rounded-full bg-white">
+              <div
+                onClick={handleAvatarClick}
+                className="h-full w-full overflow-hidden rounded-full bg-white cursor-pointer"
+              >
                 <Avatar src={user.avatarUrl} alt={user.username} size="xl" />
               </div>
             </div>
@@ -110,6 +129,9 @@ export function ProfileHeader({ user }: ProfileHeaderProps) {
           </div>
         </div>
       </div>
+
+      {/* Story Viewer Modal */}
+      {story && <StoryViewer story={story} onClose={handleStoryClose} />}
     </div>
   );
 }
