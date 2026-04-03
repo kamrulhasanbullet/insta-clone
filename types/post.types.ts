@@ -10,6 +10,7 @@ export interface PostType {
   likesCount: number;
   commentsCount: number;
   isLiked: boolean;
+  isSaved: boolean;
   createdAt: string;
 }
 
