@@ -9,10 +9,15 @@ import {
   PlusSquare,
   Heart,
   LogOut,
+  Bookmark,
+  Activity,
+  MoreHorizontal,
+  X,
 } from "lucide-react";
 import { Avatar } from "@/components/shared/Avatar";
 import { cn } from "@/utils/cn";
 import { FaInstagram } from "react-icons/fa";
+import { useState, useRef, useEffect } from "react";
 
 const navItems = [
   { href: "/", label: "Home", icon: Home },
@@ -24,6 +29,19 @@ const navItems = [
 export function Sidebar() {
   const pathname = usePathname();
   const { data: session } = useSession();
+  const [showMore, setShowMore] = useState(false);
+  const moreRef = useRef<HTMLDivElement>(null);
+
+  // Outside click to close
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (moreRef.current && !moreRef.current.contains(e.target as Node)) {
+        setShowMore(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
 
   return (
     <aside className="hidden md:flex flex-col fixed left-0 top-0 h-full w-64 xl:w-72 border-r border-gray-200 bg-white px-4 py-6 z-40">
@@ -67,13 +85,51 @@ export function Sidebar() {
         )}
       </nav>
 
-      <button
-        onClick={() => signOut({ callbackUrl: "/login" })}
-        className="flex items-center gap-4 px-3 py-3 rounded-xl text-sm font-medium hover:bg-gray-100 text-red-500"
-      >
-        <LogOut size={24} strokeWidth={1.5} />
-        <span className="hidden xl:block">Log out</span>
-      </button>
+      {/* More button */}
+      <div ref={moreRef} className="relative">
+        {/* Dropdown — upside*/}
+        {showMore && (
+          <div className="absolute bottom-14 left-0 w-56 bg-white border border-gray-200 rounded-2xl shadow-xl overflow-hidden z-50">
+            <Link
+              href="/saved"
+              onClick={() => setShowMore(false)}
+              className="flex items-center gap-3 px-4 py-3 text-sm font-medium hover:bg-gray-50 transition-colors"
+            >
+              <Bookmark size={20} />
+              Saved
+            </Link>
+            <Link
+              href="/activity"
+              onClick={() => setShowMore(false)}
+              className="flex items-center gap-3 px-4 py-3 text-sm font-medium hover:bg-gray-50 transition-colors"
+            >
+              <Activity size={20} />
+              Your Activity
+            </Link>
+            <hr className="border-gray-100" />
+            <button
+              onClick={() => signOut({ callbackUrl: "/login" })}
+              className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-red-500 hover:bg-gray-50 transition-colors cursor-pointer"
+            >
+              <LogOut size={20} />
+              Log out
+            </button>
+          </div>
+        )}
+
+        {/* More button */}
+        <button
+          onClick={() => setShowMore((v) => !v)}
+          className="w-full flex items-center gap-4 px-3 py-3 rounded-xl text-sm font-medium hover:bg-gray-100 transition-colors cursor-pointer"
+        >
+          {showMore ? (
+            <X size={24} strokeWidth={1.5} />
+          ) : (
+            <MoreHorizontal size={24} strokeWidth={1.5} />
+          )}
+          <span className="hidden xl:block">More</span>
+        </button>
+      </div>
     </aside>
   );
 }

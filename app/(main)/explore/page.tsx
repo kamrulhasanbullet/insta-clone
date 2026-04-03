@@ -64,7 +64,7 @@ export default function ExplorePage() {
               className="object-cover group-hover:scale-110 transition-transform duration-200"
               sizes="(max-width: 768px) 33vw, 400px"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="absolute inset-0 bg-linear-to-t from-black/20 via-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
           </Link>
         ))}
       </div>
