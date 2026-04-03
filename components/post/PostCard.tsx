@@ -10,6 +10,7 @@ import { PostType } from "@/types/post.types";
 import { useCallback, useState } from "react";
 import { StoryType } from "@/types/story.types";
 import { StoryViewer } from "../stories/StoryViewer";
+import { useSave } from "@/hooks/useSave";
 
 interface PostCardProps {
   post: PostType;
@@ -25,6 +26,10 @@ export function PostCard({ post }: PostCardProps) {
   const [showCommentInput, setShowCommentInput] = useState(false);
   const [commentText, setCommentText] = useState("");
   const [story, setStory] = useState<StoryType | null>(null);
+  const { saved, toggle: toggleSave } = useSave(
+    post._id,
+    post.isSaved ?? false,
+  );
 
   const handleComment = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -114,8 +119,15 @@ export function PostCard({ post }: PostCardProps) {
               <MessageCircle size={24} className="text-gray-800" />
             </button>
           </div>
-          <button aria-label="Save">
-            <Bookmark size={24} className="text-gray-800" />
+          <button
+            onClick={toggleSave}
+            aria-label={saved ? "Unsave" : "Save"}
+            className="transition-transform active:scale-90 cursor-pointer"
+          >
+            <Bookmark
+              size={24}
+              className={saved ? "fill-black text-black" : "text-gray-800"}
+            />
           </button>
         </div>
 
