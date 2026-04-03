@@ -6,6 +6,7 @@ import { NotificationService } from "./notification.service";
 import { AppError } from "@/utils/apiError";
 import { CreatePostInput } from "@/lib/validations/post.schema";
 import mongoose from "mongoose";
+import Saved from "@/models/Saved";
 
 export class PostService {
   static async createPost(authorId: string, input: CreatePostInput) {
@@ -51,11 +52,15 @@ export class PostService {
       Post.countDocuments({ author: { $in: followingIds } }),
     ]);
 
+    const savedDocs = await Saved.find({ user: userId }).select("post").lean();
+    const savedPostIds = new Set(savedDocs.map((s) => s.post.toString()));
+
     // Attach isLiked flag
     const postsWithLike = posts.map((post) => ({
       ...post,
       isLiked: post.likedBy.some((id) => id.toString() === userId),
-      likedBy: undefined, // don't expose the full array
+      isSaved: savedPostIds.has(post._id.toString()),
+      likedBy: undefined,
     }));
 
     return {
@@ -77,11 +82,20 @@ export class PostService {
       .populate("author", "username fullName avatarUrl isVerified")
       .lean();
 
+    let savedPostIds = new Set<string>();
+    if (currentUserId) {
+      const savedDocs = await Saved.find({ user: currentUserId })
+        .select("post")
+        .lean();
+      savedPostIds = new Set(savedDocs.map((s) => s.post.toString()));
+    }
+
     return posts.map((post) => ({
       ...post,
       isLiked: currentUserId
         ? post.likedBy.some((id) => id.toString() === currentUserId)
         : false,
+      isSaved: savedPostIds.has(post._id.toString()),
       likedBy: undefined,
     }));
   }
@@ -93,11 +107,21 @@ export class PostService {
       .lean();
     if (!post) throw new AppError("Post not found", 404);
 
+    let isSaved = false;
+    if (currentUserId) {
+      const savedDoc = await Saved.exists({
+        user: currentUserId,
+        post: postId,
+      });
+      isSaved = !!savedDoc;
+    }
+
     return {
       ...post,
       isLiked: currentUserId
         ? post.likedBy.some((id) => id.toString() === currentUserId)
         : false,
+      isSaved,
       likedBy: undefined,
     };
   }
