@@ -25,7 +25,7 @@ export function PostCard({ post }: PostCardProps) {
   );
   const [showCommentInput, setShowCommentInput] = useState(false);
   const [commentText, setCommentText] = useState("");
-  const [story, setStory] = useState<StoryType | null>(null);
+  const [stories, setStories] = useState<StoryType[]>([]);
   const { saved, toggle: toggleSave } = useSave(
     post._id,
     post.isSaved ?? false,
@@ -46,12 +46,12 @@ export function PostCard({ post }: PostCardProps) {
     const res = await fetch(`/api/users/${post.author.username}/stories`);
     const data = await res.json();
     if (data.stories?.length > 0) {
-      setStory(data.stories[0]);
+      setStories(data.stories);
     }
   };
 
   const handleStoryClose = useCallback(() => {
-    setStory(null);
+    setStories([]);
   }, []);
 
   return (
@@ -187,7 +187,15 @@ export function PostCard({ post }: PostCardProps) {
       )}
 
       {/* Story Viewer */}
-      {story && <StoryViewer story={story} onClose={handleStoryClose} />}
+      {stories.length > 0 && (
+        <StoryViewer
+          stories={stories}
+          onClose={handleStoryClose}
+          onDelete={(id) =>
+            setStories((prev) => prev.filter((s) => s._id !== id))
+          }
+        />
+      )}
     </article>
   );
 }

@@ -20,18 +20,19 @@ export function ProfileHeader({ user }: ProfileHeaderProps) {
     user.username,
     user.isFollowing,
   );
-  const [story, setStory] = useState<StoryType | null>(null);
+  const [stories, setStories] = useState<StoryType[]>([]);
 
   const handleAvatarClick = async () => {
     const res = await fetch(`/api/users/${user.username}/stories`);
     const data = await res.json();
     if (data.stories?.length > 0) {
-      setStory(data.stories[0]);
+      setStories(data.stories);
     }
   };
 
   const handleStoryClose = useCallback(() => {
-    setStory(null);
+    // setStory(null);
+    setStories([]);
   }, []);
 
   return (
@@ -131,7 +132,15 @@ export function ProfileHeader({ user }: ProfileHeaderProps) {
       </div>
 
       {/* Story Viewer Modal */}
-      {story && <StoryViewer story={story} onClose={handleStoryClose} />}
+      {stories.length > 0 && (
+        <StoryViewer
+          stories={stories}
+          onClose={handleStoryClose}
+          onDelete={(id) =>
+            setStories((prev) => prev.filter((s) => s._id !== id))
+          }
+        />
+      )}
     </div>
   );
 }
