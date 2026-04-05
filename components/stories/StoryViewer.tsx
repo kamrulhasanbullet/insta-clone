@@ -13,18 +13,22 @@ interface StoryViewerProps {
   stories: StoryType[];
   initialIndex?: number;
   onClose: () => void;
+  onDelete?: (storyId: string) => void;
 }
 
 export function StoryViewer({
   stories,
   initialIndex = 0,
   onClose,
+  onDelete,
 }: StoryViewerProps) {
   const { data: session } = useSession();
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const [progress, setProgress] = useState(0);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const onCloseRef = useRef(onClose);
-  const deletingRef = useRef(false);
+
   const story = stories[currentIndex];
   const isOwn = session?.user?.username === story?.author.username;
 
@@ -33,7 +37,7 @@ export function StoryViewer({
   }, [onClose]);
 
   useEffect(() => {
-    if (!story) return;
+    if (!story || showDeleteModal) return;
     setProgress(0);
 
     const interval = setInterval(() => {
@@ -58,21 +62,22 @@ export function StoryViewer({
       clearInterval(interval);
       clearTimeout(closeTimeout);
     };
-  }, [story?._id, currentIndex]);
+  }, [story?._id, currentIndex, showDeleteModal]);
 
   if (!story) return null;
 
-  const handleDelete = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (deletingRef.current) return;
-    deletingRef.current = true;
+  const handleDeleteConfirm = async () => {
+    setDeleting(true);
     await fetch(`/api/stories/${story._id}`, { method: "DELETE" });
+    setDeleting(false);
+    setShowDeleteModal(false);
+    onDelete?.(story._id);
     onCloseRef.current();
   };
 
   const goNext = (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (showDeleteModal) return;
     if (currentIndex < stories.length - 1) {
       setCurrentIndex((prev) => prev + 1);
     } else {
@@ -82,6 +87,7 @@ export function StoryViewer({
 
   const goPrev = (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (showDeleteModal) return;
     if (currentIndex > 0) {
       setCurrentIndex((prev) => prev - 1);
     }
@@ -153,15 +159,18 @@ export function StoryViewer({
 
           {isOwn && (
             <button
-              onClick={handleDelete}
-              className="text-white p-2 rounded-full hover:bg-red-700"
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowDeleteModal(true);
+              }}
+              className="text-white bg-black p-2 rounded-full hover:bg-red-700/80 cursor-pointer"
             >
               <Trash2 size={18} />
             </button>
           )}
         </div>
 
-        {/* Prev / Next tap areas — z-10 (header এর নিচে) */}
+        {/* Prev / Next tap areas */}
         <div className="absolute inset-0 flex z-10">
           <div className="flex-1 cursor-pointer" onClick={goPrev} />
           <div className="flex-1 cursor-pointer" onClick={goNext} />
@@ -184,6 +193,39 @@ export function StoryViewer({
             <p className="text-white text-sm text-center bg-black/40 rounded-lg px-3 py-2">
               {story.caption}
             </p>
+          </div>
+        )}
+
+        {/* Delete Confirmation Modal */}
+        {showDeleteModal && (
+          <div
+            className="absolute inset-0 z-30 flex items-center justify-center bg-black/60"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="bg-white rounded-2xl w-72 overflow-hidden shadow-xl">
+              <div className="px-6 py-5 text-center border-b border-gray-100">
+                <h3 className="text-base font-semibold">Delete Story?</h3>
+                <p className="text-sm text-gray-500 mt-1">
+                  This story will be permanently deleted.
+                </p>
+              </div>
+              <button
+                onClick={handleDeleteConfirm}
+                disabled={deleting}
+                className="w-full py-3 text-sm font-semibold text-red-500 hover:bg-gray-50 transition-colors border-b border-gray-100 disabled:opacity-50 cursor-pointer"
+              >
+                {deleting ? "Deleting..." : "Delete"}
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowDeleteModal(false);
+                }}
+                className="w-full py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+            </div>
           </div>
         )}
       </div>
