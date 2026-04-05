@@ -6,7 +6,7 @@ import { AppError } from "@/utils/apiError";
 import mongoose from "mongoose";
 
 export class StoryService {
-  // Feed stories — followed users এর stories
+  // Feed stories — followed users all stories
   static async getFeedStories(userId: string) {
     await connectDB();
 
@@ -18,64 +18,27 @@ export class StoryService {
 
     const now = new Date();
 
-    // প্রতিটা user এর latest story group করো
-    const stories = await Story.aggregate([
-      {
-        $match: {
-          author: { $in: followingIds },
-          expiresAt: { $gt: now },
-        },
-      },
-      { $sort: { createdAt: -1 } },
-      {
-        $group: {
-          _id: "$author",
-          latestStory: { $first: "$$ROOT" },
-          storiesCount: { $sum: 1 },
-        },
-      },
-      {
-        $lookup: {
-          from: "users",
-          localField: "_id",
-          foreignField: "_id",
-          as: "author",
-        },
-      },
-      { $unwind: "$author" },
-      {
-        $project: {
-          _id: "$latestStory._id",
-          imageUrl: "$latestStory.imageUrl",
-          caption: "$latestStory.caption",
-          createdAt: "$latestStory.createdAt",
-          expiresAt: "$latestStory.expiresAt",
-          viewers: "$latestStory.viewers",
-          storiesCount: 1,
-          author: {
-            _id: "$author._id",
-            username: "$author.username",
-            avatarUrl: "$author.avatarUrl",
-            fullName: "$author.fullName",
-          },
-        },
-      },
-      { $sort: { createdAt: -1 } },
-    ]);
+    const stories = await Story.find({
+      author: { $in: followingIds },
+      expiresAt: { $gt: now },
+    })
+      .sort({ createdAt: -1 })
+      .populate("author", "username avatarUrl fullName")
+      .lean();
 
-    // current user কে first এ রাখো
+    // current user oner stories first, then followed users stories
     const sorted = [
-      ...stories.filter((s) => s.author._id.toString() === userId),
-      ...stories.filter((s) => s.author._id.toString() !== userId),
+      ...stories.filter((s: any) => s.author._id.toString() === userId),
+      ...stories.filter((s: any) => s.author._id.toString() !== userId),
     ];
 
-    return sorted.map((s) => ({
+    return sorted.map((s: any) => ({
       ...s,
       isViewed: s.viewers?.some((id: any) => id.toString() === userId) ?? false,
     }));
   }
 
-  // User এর সব stories
+  // User and followed users stories
   static async getUserStories(username: string, currentUserId: string) {
     await connectDB();
 

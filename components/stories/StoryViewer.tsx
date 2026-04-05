@@ -10,21 +10,30 @@ import { StoryType } from "@/types/story.types";
 import { timeAgo } from "@/utils/formatDate";
 
 interface StoryViewerProps {
-  story: StoryType;
+  stories: StoryType[];
+  initialIndex?: number;
   onClose: () => void;
 }
 
-export function StoryViewer({ story, onClose }: StoryViewerProps) {
+export function StoryViewer({
+  stories,
+  initialIndex = 0,
+  onClose,
+}: StoryViewerProps) {
   const { data: session } = useSession();
+  const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const [progress, setProgress] = useState(0);
-  const isOwn = session?.user?.username === story.author.username;
   const onCloseRef = useRef(onClose);
+
+  const story = stories[currentIndex];
+  const isOwn = session?.user?.username === story?.author.username;
 
   useEffect(() => {
     onCloseRef.current = onClose;
   }, [onClose]);
 
   useEffect(() => {
+    if (!story) return;
     setProgress(0);
 
     const interval = setInterval(() => {
@@ -38,18 +47,38 @@ export function StoryViewer({ story, onClose }: StoryViewerProps) {
     }, 50);
 
     const closeTimeout = setTimeout(() => {
-      onCloseRef.current();
+      if (currentIndex < stories.length - 1) {
+        setCurrentIndex((prev) => prev + 1);
+      } else {
+        onCloseRef.current();
+      }
     }, 5100);
 
     return () => {
       clearInterval(interval);
       clearTimeout(closeTimeout);
     };
-  }, [story._id]);
+  }, [story?._id, currentIndex]);
+
+  if (!story) return null;
 
   const handleDelete = async () => {
     await fetch(`/api/stories/${story._id}`, { method: "DELETE" });
     onCloseRef.current();
+  };
+
+  const goNext = () => {
+    if (currentIndex < stories.length - 1) {
+      setCurrentIndex((prev) => prev + 1);
+    } else {
+      onCloseRef.current();
+    }
+  };
+
+  const goPrev = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex((prev) => prev - 1);
+    }
   };
 
   return (
@@ -62,16 +91,27 @@ export function StoryViewer({ story, onClose }: StoryViewerProps) {
         <X size={24} />
       </button>
 
-      {/* Story content */}
       <div className="relative w-full max-w-sm h-full max-h-[90vh] mx-auto">
-        {/* Progress bar */}
-        <div className="absolute top-0 left-0 right-0 z-10 px-4 pt-4">
-          <div className="h-0.5 bg-white/30 rounded-full overflow-hidden">
+        {/* Multiple progress bars */}
+        <div className="absolute top-0 left-0 right-0 z-10 px-4 pt-4 flex gap-1">
+          {stories.map((s, i) => (
             <div
-              className="h-full bg-white rounded-full transition-none"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
+              key={s._id}
+              className="flex-1 h-0.5 bg-white/30 rounded-full overflow-hidden"
+            >
+              <div
+                className="h-full bg-white rounded-full transition-none"
+                style={{
+                  width:
+                    i < currentIndex
+                      ? "100%"
+                      : i === currentIndex
+                        ? `${progress}%`
+                        : "0%",
+                }}
+              />
+            </div>
+          ))}
         </div>
 
         {/* Header */}
@@ -106,6 +146,12 @@ export function StoryViewer({ story, onClose }: StoryViewerProps) {
           )}
         </div>
 
+        {/* Prev / Next tap areas */}
+        <div className="absolute inset-0 flex z-10">
+          <div className="flex-1 cursor-pointer" onClick={goPrev} />
+          <div className="flex-1 cursor-pointer" onClick={goNext} />
+        </div>
+
         {/* Image */}
         <div className="w-full h-full relative">
           <Image
@@ -119,7 +165,7 @@ export function StoryViewer({ story, onClose }: StoryViewerProps) {
 
         {/* Caption */}
         {story.caption && (
-          <div className="absolute bottom-8 left-0 right-0 px-4">
+          <div className="absolute bottom-8 left-0 right-0 px-4 z-20">
             <p className="text-white text-sm text-center bg-black/40 rounded-lg px-3 py-2">
               {story.caption}
             </p>
