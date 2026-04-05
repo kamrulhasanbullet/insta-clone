@@ -24,7 +24,7 @@ export function StoryViewer({
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const [progress, setProgress] = useState(0);
   const onCloseRef = useRef(onClose);
-
+  const deletingRef = useRef(false);
   const story = stories[currentIndex];
   const isOwn = session?.user?.username === story?.author.username;
 
@@ -62,12 +62,17 @@ export function StoryViewer({
 
   if (!story) return null;
 
-  const handleDelete = async () => {
+  const handleDelete = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (deletingRef.current) return;
+    deletingRef.current = true;
     await fetch(`/api/stories/${story._id}`, { method: "DELETE" });
     onCloseRef.current();
   };
 
-  const goNext = () => {
+  const goNext = (e: React.MouseEvent) => {
+    e.stopPropagation();
     if (currentIndex < stories.length - 1) {
       setCurrentIndex((prev) => prev + 1);
     } else {
@@ -75,25 +80,32 @@ export function StoryViewer({
     }
   };
 
-  const goPrev = () => {
+  const goPrev = (e: React.MouseEvent) => {
+    e.stopPropagation();
     if (currentIndex > 0) {
       setCurrentIndex((prev) => prev - 1);
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black flex items-center justify-center">
+    <div
+      className="fixed inset-0 z-50 bg-black flex items-center justify-center"
+      onClick={(e) => e.stopPropagation()}
+    >
       {/* Close */}
       <button
-        onClick={() => onCloseRef.current()}
-        className="absolute top-4 right-4 z-10 text-white p-2 rounded-full hover:bg-white/10"
+        onClick={(e) => {
+          e.stopPropagation();
+          onCloseRef.current();
+        }}
+        className="absolute top-4 right-4 z-30 text-white p-2 rounded-full hover:bg-white/10"
       >
         <X size={24} />
       </button>
 
       <div className="relative w-full max-w-sm h-full max-h-[90vh] mx-auto">
-        {/* Multiple progress bars */}
-        <div className="absolute top-0 left-0 right-0 z-10 px-4 pt-4 flex gap-1">
+        {/* Progress bars */}
+        <div className="absolute top-0 left-0 right-0 z-20 px-4 pt-4 flex gap-1">
           {stories.map((s, i) => (
             <div
               key={s._id}
@@ -115,11 +127,14 @@ export function StoryViewer({
         </div>
 
         {/* Header */}
-        <div className="absolute top-8 left-0 right-0 z-10 px-4 flex items-center justify-between">
+        <div className="absolute top-8 left-0 right-0 z-20 px-4 flex items-center justify-between">
           <Link
             href={`/profile/${story.author.username}`}
+            onClick={(e) => {
+              e.stopPropagation();
+              onCloseRef.current();
+            }}
             className="flex items-center gap-2"
-            onClick={() => onCloseRef.current()}
           >
             <Avatar
               src={story.author.avatarUrl}
@@ -139,14 +154,14 @@ export function StoryViewer({
           {isOwn && (
             <button
               onClick={handleDelete}
-              className="text-white p-2 rounded-full hover:bg-white/10"
+              className="text-white p-2 rounded-full hover:bg-red-700"
             >
               <Trash2 size={18} />
             </button>
           )}
         </div>
 
-        {/* Prev / Next tap areas */}
+        {/* Prev / Next tap areas — z-10 (header এর নিচে) */}
         <div className="absolute inset-0 flex z-10">
           <div className="flex-1 cursor-pointer" onClick={goPrev} />
           <div className="flex-1 cursor-pointer" onClick={goNext} />

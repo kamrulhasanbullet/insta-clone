@@ -82,9 +82,15 @@ export class StoryService {
   static async deleteStory(storyId: string, userId: string) {
     await connectDB();
     const story = await Story.findById(storyId);
-    if (!story) throw new AppError("Story not found", 404);
-    if (story.author.toString() !== userId)
+
+    if (!story) {
+      return { success: true };
+    }
+
+    if (story.author.toString() !== userId) {
       throw new AppError("Unauthorized", 403);
+    }
+
     await Story.findByIdAndDelete(storyId);
     return { success: true };
   }
