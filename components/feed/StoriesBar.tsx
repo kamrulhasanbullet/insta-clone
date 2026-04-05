@@ -68,6 +68,11 @@ export function StoriesBar() {
     });
   }, []);
 
+  const handleStoryDelete = useCallback((storyId: string) => {
+    setStories((prev) => prev.filter((s) => s._id !== storyId));
+    setSelectedStories((prev) => prev.filter((s) => s._id !== storyId));
+  }, []);
+
   return (
     <>
       <div
@@ -180,7 +185,11 @@ export function StoriesBar() {
 
       {/* Story Viewer */}
       {selectedStories.length > 0 && (
-        <StoryViewer stories={selectedStories} onClose={handleClose} />
+        <StoryViewer
+          stories={selectedStories}
+          onClose={handleClose}
+          onDelete={handleStoryDelete}
+        />
       )}
     </>
   );

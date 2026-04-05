@@ -11,10 +11,20 @@ export default function CreateStoryPage() {
   const [preview, setPreview] = useState<string | null>(null);
   const [caption, setCaption] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    // ← 5MB limit
+    if (file.size > 8 * 1024 * 1024) {
+      setError("Image size must be less than 5MB");
+      if (fileRef.current) fileRef.current.value = "";
+      return;
+    }
+
+    setError("");
     const reader = new FileReader();
     reader.onloadend = () => setPreview(reader.result as string);
     reader.readAsDataURL(file);
@@ -96,6 +106,12 @@ export default function CreateStoryPage() {
           className="hidden"
           onChange={handleFileChange}
         />
+
+        {error && (
+          <div className="bg-red-500/20 border border-red-500/50 rounded-xl px-4 py-3 mb-4">
+            <p className="text-red-400 text-sm">{error}</p>
+          </div>
+        )}
 
         {/* Caption */}
         <input
