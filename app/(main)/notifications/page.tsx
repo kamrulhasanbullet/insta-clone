@@ -2,15 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import Link from "next/link";
-import Image from "next/image";
-import { Heart, MessageCircle, UserPlus, Bell, Check } from "lucide-react";
-import { Avatar } from "@/components/shared/Avatar";
+import { Bell, Check } from "lucide-react";
 import { NotificationItem } from "@/components/notifications/NotificationItem";
 import { Spinner } from "@/components/shared/Spinner";
 import { useNotifications } from "@/hooks/useNotifications";
-import { timeAgo } from "@/utils/formatDate";
-import { NotificationType } from "@/types/notification.types";
+import { Skeleton } from "@/components/shared/Skeleton";
 
 export default function NotificationsPage() {
   const { data: session } = useSession();
@@ -66,8 +62,17 @@ export default function NotificationsPage() {
 
       {/* Notifications List */}
       {loading && notifications.length === 0 ? (
-        <div className="py-20 text-center text-gray-500">
-          <Spinner />
+        <div className="divide-y divide-gray-100">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="flex items-start gap-4 p-4">
+              <Skeleton className="w-8 h-8 rounded-full shrink-0" />
+              <div className="flex-1 space-y-2">
+                <Skeleton className="h-3 w-48 rounded" />
+                <Skeleton className="h-3 w-24 rounded" />
+              </div>
+              <Skeleton className="w-12 h-12 rounded-lg shrink-0" />
+            </div>
+          ))}
         </div>
       ) : notifications.length === 0 ? (
         <div className="py-20 text-center text-gray-500">
