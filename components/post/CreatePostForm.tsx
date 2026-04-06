@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ImagePlus, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 export function CreatePostForm() {
   const router = useRouter();
@@ -49,10 +50,17 @@ export function CreatePostForm() {
       });
 
       if (!postRes.ok) throw new Error("Failed to create post");
+
+      toast.success("Post shared!", {
+        description: "Your post is now live.",
+      });
+
       router.push("/");
       router.refresh();
     } catch (err) {
-      console.error(err);
+      toast.error("Something went wrong", {
+        description: "Please try again.",
+      });
     } finally {
       setUploading(false);
     }
