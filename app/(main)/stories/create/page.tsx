@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ImagePlus, Loader2, X } from "lucide-react";
+import { toast } from "sonner";
 
 export default function CreateStoryPage() {
   const router = useRouter();
@@ -57,10 +58,16 @@ export default function CreateStoryPage() {
         }),
       });
 
+      toast.success("Story shared!", {
+        description: "Your story is now live.",
+      });
+
       router.push("/");
       router.refresh();
     } catch (err) {
-      console.error(err);
+      toast.error("Something went wrong", {
+        description: "Please try again.",
+      });
     } finally {
       setUploading(false);
     }
