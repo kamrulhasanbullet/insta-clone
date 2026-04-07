@@ -4,11 +4,12 @@ import { handleApiError } from "@/utils/apiError";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { username: string } },
+  { params }: { params: Promise<{ username: string }> },
 ) {
   try {
-    const followers = await UserService.getFollowers(params.username);
-    return NextResponse.json({ followers });
+    const { username } = await params;
+    const following = await UserService.getFollowing(username);
+    return NextResponse.json({ following });
   } catch (error) {
     return handleApiError(error);
   }
