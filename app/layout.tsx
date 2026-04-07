@@ -9,6 +9,9 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Instagram Clone",
   description: "Share your moments",
+  icons: {
+    icon: "/instagram.png",
+  },
 };
 
 export default function RootLayout({
