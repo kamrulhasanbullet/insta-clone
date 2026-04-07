@@ -8,8 +8,8 @@ export async function GET(
 ) {
   try {
     const { username } = await params;
-    const following = await UserService.getFollowing(username);
-    return NextResponse.json({ following });
+    const followers = await UserService.getFollowers(username);
+    return NextResponse.json({ followers });
   } catch (error) {
     return handleApiError(error);
   }
