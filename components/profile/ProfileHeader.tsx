@@ -8,6 +8,7 @@ import { UserWithFollow } from "@/types/user.types";
 import { useCallback, useState } from "react";
 import { StoryType } from "@/types/story.types";
 import { StoryViewer } from "../stories/StoryViewer";
+import { FollowListModal } from "./FollowListModal";
 
 interface ProfileHeaderProps {
   user: UserWithFollow;
@@ -21,6 +22,9 @@ export function ProfileHeader({ user }: ProfileHeaderProps) {
     user.isFollowing,
   );
   const [stories, setStories] = useState<StoryType[]>([]);
+  const [followModal, setFollowModal] = useState<
+    "followers" | "following" | null
+  >(null);
 
   const handleAvatarClick = async () => {
     const res = await fetch(`/api/users/${user.username}/stories`);
@@ -31,7 +35,6 @@ export function ProfileHeader({ user }: ProfileHeaderProps) {
   };
 
   const handleStoryClose = useCallback(() => {
-    // setStory(null);
     setStories([]);
   }, []);
 
@@ -82,19 +85,35 @@ export function ProfileHeader({ user }: ProfileHeaderProps) {
             </div>
 
             {/* Stats */}
-            <div className="mb-4 flex justify-center gap-6 md:justify-start md:gap-8">
-              {[
-                { label: "posts", value: user.postsCount },
-                { label: "followers", value: user.followersCount },
-                { label: "following", value: user.followingCount },
-              ].map(({ label, value }) => (
-                <div key={label} className="text-center">
-                  <span className="font-semibold text-sm md:text-base">
-                    {value.toLocaleString()}
-                  </span>
-                  <span className="ml-1 text-sm text-gray-600">{label}</span>
-                </div>
-              ))}
+            <div className="flex justify-center gap-6 md:justify-start md:gap-8 mb-4">
+              <div className="text-center">
+                <span className="font-semibold text-sm md:text-base">
+                  {user.postsCount.toLocaleString()}
+                </span>
+                <span className="ml-1 text-sm text-gray-600">posts</span>
+              </div>
+
+              {/* Followers — clickable */}
+              <button
+                onClick={() => setFollowModal("followers")}
+                className="text-center hover:opacity-90 transition-opacity cursor-pointer"
+              >
+                <span className="font-semibold text-sm md:text-base">
+                  {user.followersCount.toLocaleString()}
+                </span>
+                <span className="ml-1 text-sm text-gray-600">followers</span>
+              </button>
+
+              {/* Following — clickable */}
+              <button
+                onClick={() => setFollowModal("following")}
+                className="text-center hover:opacity-90 transition-opacity cursor-pointer"
+              >
+                <span className="font-semibold text-sm md:text-base">
+                  {user.followingCount.toLocaleString()}
+                </span>
+                <span className="ml-1 text-sm text-gray-600">following</span>
+              </button>
             </div>
 
             {/* Bio */}
@@ -139,6 +158,15 @@ export function ProfileHeader({ user }: ProfileHeaderProps) {
           onDelete={(id) =>
             setStories((prev) => prev.filter((s) => s._id !== id))
           }
+        />
+      )}
+
+      {/* Follow List Modal */}
+      {followModal && (
+        <FollowListModal
+          username={user.username}
+          type={followModal}
+          onClose={() => setFollowModal(null)}
         />
       )}
     </div>
