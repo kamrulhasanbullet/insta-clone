@@ -35,7 +35,7 @@ export function PostActions({
       <div className="flex items-center gap-2">
         <Button
           variant="ghost"
-          size="icon"
+          size="sm"
           onClick={toggle}
           disabled={loading}
           className="h-11 w-11 p-0 hover:bg-gray-100"
@@ -51,7 +51,7 @@ export function PostActions({
 
         <Button
           variant="ghost"
-          size="icon"
+          size="sm"
           className="h-11 w-11 p-0 hover:bg-gray-100"
         >
           <MessageCircle size={24} className="text-gray-700" />
@@ -59,7 +59,7 @@ export function PostActions({
 
         <Button
           variant="ghost"
-          size="icon"
+          size="sm"
           className="h-11 w-11 p-0 hover:bg-gray-100"
         >
           <Share2 size={24} className="text-gray-700" />
@@ -68,7 +68,7 @@ export function PostActions({
 
       <Button
         variant="ghost"
-        size="icon"
+        size="sm"
         className="h-11 w-11 p-0 hover:bg-gray-100"
       >
         <Bookmark size={24} className="text-gray-700" />
