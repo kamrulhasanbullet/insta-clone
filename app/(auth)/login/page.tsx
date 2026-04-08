@@ -37,7 +37,7 @@ export default function LoginPage() {
       <div className="w-full max-w-sm">
         <div className="bg-white border border-gray-300 rounded-lg p-10 mb-4">
           <div className="flex justify-center mb-8">
-            <FaInstagram size={48} className="text-gray-800" />
+            <FaInstagram size={48} className="text-pink-600" />
           </div>
 
           {error && (
