@@ -7,7 +7,6 @@ import { PostHeader } from "./PostHeader";
 import { PostActions } from "./PostActions";
 import { CommentSection } from "./CommentSection";
 import { PostType } from "@/types/post.types";
-import { cn } from "@/utils/cn";
 import { useRouter } from "next/navigation";
 
 interface PostModalProps {
@@ -17,7 +16,6 @@ interface PostModalProps {
 export function PostModal({ post }: PostModalProps) {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
-  const [comments, setComments] = useState<any[]>([]);
   const [commentsCount, setCommentsCount] = useState(post.commentsCount);
 
   useEffect(() => {
@@ -38,8 +36,7 @@ export function PostModal({ post }: PostModalProps) {
     };
   }, [router]);
 
-  const handleCommentAdded = (comment: any) => {
-    setComments((prev) => [comment, ...prev]);
+  const handleCommentAdded = () => {
     setCommentsCount((prev) => prev + 1);
   };
 
@@ -52,7 +49,6 @@ export function PostModal({ post }: PostModalProps) {
         role="dialog"
         aria-modal="true"
       >
-        {/* Close Button */}
         <button
           onClick={() => router.back()}
           className="absolute top-6 right-6 z-20 p-2 text-white hover:bg-white/20 rounded-xl transition-all group"
@@ -61,7 +57,6 @@ export function PostModal({ post }: PostModalProps) {
           <X className="w-6 h-6 group-hover:scale-110 transition-transform" />
         </button>
 
-        {/* Left: Image */}
         <div className="relative flex-1 min-w-0 max-w-2xl">
           <Image
             src={post.imageUrl}
@@ -72,12 +67,9 @@ export function PostModal({ post }: PostModalProps) {
           />
         </div>
 
-        {/* Right: Post Details */}
         <div className="w-full max-w-md flex flex-col border-l border-gray-200">
-          {/* Post Header */}
           <PostHeader author={post.author} location={post.location} />
 
-          {/* Post Content */}
           <div className="flex-1 min-h-0 overflow-y-auto">
             <PostActions
               postId={post._id}
@@ -99,8 +91,8 @@ export function PostModal({ post }: PostModalProps) {
 
             <CommentSection
               postId={post._id}
-              comments={comments}
-              commentsCount={commentsCount}
+              initialComments={post.comments ?? []}
+              initialHasMore={false}
               onCommentAdded={handleCommentAdded}
             />
           </div>

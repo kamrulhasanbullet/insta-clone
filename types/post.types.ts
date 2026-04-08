@@ -12,6 +12,7 @@ export interface PostType {
   isLiked: boolean;
   isSaved: boolean;
   createdAt: string;
+  comments?: CommentType[];
 }
 
 export interface CommentType {

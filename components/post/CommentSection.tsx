@@ -10,11 +10,13 @@ interface Props {
   postId: string;
   initialComments: CommentType[];
   initialHasMore: boolean;
+  onCommentAdded?: (comment: CommentType) => void;
 }
 
 export function CommentSection({
   postId,
   initialComments,
+  onCommentAdded, 
 }: Props) {
   const { data: session } = useSession();
   const [comments, setComments] = useState<CommentType[]>(initialComments);
@@ -34,6 +36,7 @@ export function CommentSection({
       });
       const data = await res.json();
       setComments((prev) => [data.comment, ...prev]);
+      onCommentAdded?.(data.comment);
       setText("");
     } finally {
       setLoading(false);
@@ -42,7 +45,6 @@ export function CommentSection({
 
   return (
     <div className="border-t border-gray-100">
-      {/* Comment input */}
       {session && (
         <form
           onSubmit={handleSubmit}
@@ -69,7 +71,6 @@ export function CommentSection({
         </form>
       )}
 
-      {/* Comments list */}
       <div className="px-4 py-2 space-y-3 max-h-96 overflow-y-auto">
         {comments.length === 0 && (
           <p className="text-sm text-gray-400 text-center py-4">

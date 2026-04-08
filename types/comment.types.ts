@@ -8,7 +8,7 @@ export interface CommentType {
   likesCount: number;
   parentComment?: string | null;
   createdAt: string;
-  updatedAt: string;
+  updatedAt?: string;
 }
 
 export interface CreateCommentInput {
