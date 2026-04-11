@@ -1,43 +1,40 @@
 "use client";
 
-import { Heart, Home, PlusSquare, Search } from "lucide-react";
-import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Avatar } from "../shared/Avatar";
-import { BsInstagram } from "react-icons/bs";
+import { useSession } from "next-auth/react";
+import { Home, Search, PlusSquare, Heart } from "lucide-react";
+import { Avatar } from "@/components/shared/Avatar";
 import { cn } from "@/utils/cn";
+import { useUnreadCount } from "@/hooks/useNotifications";
+import { BsInstagram } from "react-icons/bs";
 
 const navItems = [
-  {
-    href: "/",
-    icon: Home,
-    label: "Home",
-    match: (path: string) => path === "/",
-  },
+  { href: "/", label: "Home", icon: Home, match: (p: string) => p === "/" },
   {
     href: "/explore",
-    icon: Search,
     label: "Explore",
-    match: (path: string) => path === "/explore",
+    icon: Search,
+    match: (p: string) => p === "/explore",
   },
   {
     href: "/post/create",
-    icon: PlusSquare,
     label: "Create",
-    match: (path: string) => path === "/post/create",
+    icon: PlusSquare,
+    match: (p: string) => p === "/post/create",
   },
   {
     href: "/notifications",
-    icon: Heart,
     label: "Activity",
-    match: (path: string) => path === "/notifications",
+    icon: Heart,
+    match: (p: string) => p === "/notifications",
   },
 ];
 
 export function MobileNav() {
   const pathname = usePathname();
   const { data: session } = useSession();
+  const unreadCount = useUnreadCount(); 
 
   return (
     <>
@@ -54,7 +51,23 @@ export function MobileNav() {
                   isActive ? "text-black" : "text-gray-500 hover:text-gray-900",
                 )}
               >
-                <Icon size={24} strokeWidth={isActive ? 2.5 : 1.5} />
+                {/* Icon with badge */}
+                <div className="relative">
+                  <Icon
+                    size={24}
+                    strokeWidth={isActive ? 2.5 : 1.5}
+                    className={cn(
+                      href === "/notifications" &&
+                        unreadCount > 0 &&
+                        "text-red-500",
+                    )}
+                  />
+                  {href === "/notifications" && unreadCount > 0 && (
+                    <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                      {unreadCount > 9 ? "9+" : unreadCount}
+                    </span>
+                  )}
+                </div>
                 <span className="text-xs font-medium">{label}</span>
               </Link>
             );
@@ -84,7 +97,6 @@ export function MobileNav() {
         </div>
       </nav>
 
-      {/* Mobile top bar */}
       {pathname.startsWith("/profile") && (
         <div className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-md border-b border-gray-200 md:hidden z-40 px-4 py-3">
           <div className="flex items-center justify-between">
