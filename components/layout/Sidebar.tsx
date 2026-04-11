@@ -18,6 +18,7 @@ import { Avatar } from "@/components/shared/Avatar";
 import { cn } from "@/utils/cn";
 import { FaInstagram } from "react-icons/fa";
 import { useState, useRef, useEffect } from "react";
+import { useUnreadCount } from "@/hooks/useNotifications";
 
 const navItems = [
   { href: "/", label: "Home", icon: Home },
@@ -31,8 +32,8 @@ export function Sidebar() {
   const { data: session } = useSession();
   const [showMore, setShowMore] = useState(false);
   const moreRef = useRef<HTMLDivElement>(null);
+  const unreadCount = useUnreadCount(); 
 
-  // Outside click to close
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
       if (moreRef.current && !moreRef.current.contains(e.target as Node)) {
@@ -62,7 +63,23 @@ export function Sidebar() {
               pathname === href && "font-bold",
             )}
           >
-            <Icon size={24} strokeWidth={pathname === href ? 2.5 : 1.5} />
+            {/* Icon with badge */}
+            <div className="relative">
+              <Icon
+                size={24}
+                strokeWidth={pathname === href ? 2.5 : 1.5}
+                className={cn(
+                  href === "/notifications" &&
+                    unreadCount > 0 &&
+                    "text-red-500",
+                )}
+              />
+              {href === "/notifications" && unreadCount > 0 && (
+                <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                  {unreadCount > 9 ? "9+" : unreadCount}
+                </span>
+              )}
+            </div>
             <span className="hidden xl:block">{label}</span>
           </Link>
         ))}
@@ -87,7 +104,6 @@ export function Sidebar() {
 
       {/* More button */}
       <div ref={moreRef} className="relative">
-        {/* Dropdown — upside*/}
         {showMore && (
           <div className="absolute bottom-14 left-0 w-56 bg-white border border-gray-200 rounded-2xl shadow-xl overflow-hidden z-50">
             <Link
@@ -117,7 +133,6 @@ export function Sidebar() {
           </div>
         )}
 
-        {/* More button */}
         <button
           onClick={() => setShowMore((v) => !v)}
           className="w-full flex items-center gap-4 px-3 py-3 rounded-xl text-sm font-medium hover:bg-gray-100 transition-colors cursor-pointer"
